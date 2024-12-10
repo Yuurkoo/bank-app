@@ -1,0 +1,55 @@
+.send-page {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  width: 350px;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 40px;
+  margin-top: 20px;
+  border: 1px solid #939199;
+  border-radius: 10px;
+  box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.065);
+}
+
+.send-page h3 {
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 24px;
+}
+
+.send-form .input-group label {
+  margin-top: 20px;
+}
+
+.send-form .input-group input {
+  width: 100%;
+  margin-top: 5px;
+  padding: 10px;
+  border: 1px solid #939199;
+  border-radius: 8px;
+}
+
+.input-group .send-btn {
+  width: 100%;
+  padding: 14px;
+  border: transparent;
+  border-radius: 12px;
+  margin-top: 10px;
+  background-color: #775ce5;
+  color: #fff;
+  margin-top: 20px;
+  transition: 0.5s;
+}
+
+.send-btn:hover {
+  opacity: 0.7;
+  transition: 0.7s;
+}
+
+@media (max-width: 768px) {
+  .send-page {
+    border: transparent;
+  }
+}

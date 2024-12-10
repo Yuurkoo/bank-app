@@ -1,0 +1,91 @@
+.add-user {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  width: 350px;
+  margin: 50px auto;
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.065);
+}
+
+.add-user h3 {
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 24px;
+}
+
+.title,
+h3 {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: center;
+}
+
+.title p {
+  color: #939199;
+  font-size: 16px;
+}
+
+.user-form .input-group label {
+  margin-top: 20px;
+}
+
+.user-form .input-group input {
+  width: 100%;
+  margin-top: 5px;
+  padding: 10px;
+  border: 1px solid #939199;
+  border-radius: 8px;
+}
+
+.error-message {
+  font-size: 14px;
+  color: #d93025;
+  text-align: left;
+  margin-top: 5px;
+}
+
+.sign-up-btn {
+  width: 100%;
+  padding: 14px;
+  border: transparent;
+  border-radius: 12px;
+  margin-top: 10px;
+  background-color: #775ce5;
+  color: #fff;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.sign-up-btn:disabled {
+  cursor: not-allowed;
+}
+
+.restore-password {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.restore-password a {
+  color: #775ce5;
+}
+
+.password-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-toggle-icon {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  cursor: pointer;
+  color: #888;
+}

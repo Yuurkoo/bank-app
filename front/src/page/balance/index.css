@@ -1,0 +1,168 @@
+.balance-page {
+  width: 850px;
+  display: flex;
+  flex-direction: column;
+}
+
+.balance {
+  width: 100%;
+  height: 210px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+
+  text-align: center;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 12px;
+
+  background-image: url(./../../../public/img/blue-bg.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.balance-header {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.balance-top-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.balance-title {
+  font-size: 16px;
+  color: #f3f5ff;
+  font-weight: 400;
+}
+
+.balance-amount {
+  font-size: 42px;
+  font-weight: 600;
+  color: #f3f5ff;
+}
+
+.balance-transactions {
+  position: absolute;
+  margin-top: 215px;
+
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.balance-receive,
+.balance-send {
+  padding: 14px;
+  border: 8px solid #fff;
+  border-radius: 50%;
+
+  background-color: #5b94e9;
+  transition: 0.2s;
+}
+
+.balance-receive:hover,
+.balance-send:hover {
+  background-color: #775ce5;
+  transition: 0.3s;
+  padding: 16px;
+}
+
+.transaction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 48px;
+  width: 100%;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+.methods-stripe-coinbase {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+}
+
+.transaction-date {
+  padding: 14px;
+}
+
+.method-icon {
+  width: 42px;
+  height: 42px;
+  padding: 8px;
+  border-radius: 50%;
+  background-color: #ededed;
+}
+
+.methods-info-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.methods-recive-info {
+  width: 80%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.method-amount-about,
+.minus-amount {
+  font-size: 18px;
+  color: #000;
+}
+
+.method-amount-about {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-weight: 500;
+}
+
+.method-amoun-about-title-info {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+}
+
+.minus-amount {
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.plus {
+  color: #24b277;
+  font-weight: 500;
+}
+
+.method-date-info {
+  font-size: 14px;
+  color: rgb(131, 130, 130);
+}
+
+.method-amount-about p {
+  font-weight: 400;
+}
+
+@media (max-width: 410px) {
+  .balance-page {
+    width: 500px;
+  }
+}
+
+@media (max-width: 375px) {
+  .balance-page {
+    width: 375px;
+  }
+}

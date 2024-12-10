@@ -1,0 +1,93 @@
+.settings-page {
+  width: 420px;
+  border: 1px solid #a5a5a7;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.title {
+  color: #000;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.settings-section input {
+  width: 100%;
+  margin-top: 5px;
+  padding: 10px;
+  border: 1px solid #939199;
+  border-radius: 8px;
+}
+
+.settings-section input:active {
+  border: 1px solid blueviolet;
+}
+
+.settings_sub_title {
+  margin-top: 30px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.sub {
+  margin-top: 16px;
+}
+
+.settings-section label {
+  font-weight: 400;
+}
+
+.setting-btn-save {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #775ce5;
+  border-radius: 12px;
+  color: #775ce5;
+  transition: 0.5s;
+}
+
+.setting-btn-save:hover {
+  background-color: #775ce5;
+  color: #fff;
+  transition: 0.7s;
+}
+
+.setting-log-out {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid rgb(249, 0, 0);
+  border-radius: 12px;
+  color: rgb(249, 0, 0);
+  transition: 0.5s;
+}
+
+.setting-log-out:hover {
+  background-color: rgb(249, 0, 0);
+  color: #fff;
+  transition: 0.7s;
+}
+
+@media (max-width: 768px) {
+  .settings-page {
+    border: transparent;
+  }
+}
+
+@media (max-width: 468px) {
+  .settings-page {
+    width: 350px;
+  }
+}

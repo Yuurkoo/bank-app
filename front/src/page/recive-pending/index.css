@@ -1,0 +1,156 @@
+.recive-page-block {
+  width: 100%;
+  padding: 14px;
+}
+
+.recive-page {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  max-width: 450px;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 40px;
+  margin-top: 20px;
+  border: 1px solid #b7b4bf;
+  border-radius: 10px;
+  box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.065);
+}
+
+.recive-page h3 {
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 24px;
+}
+
+.recive-form .input-group label {
+  margin-top: 20px;
+}
+
+.recive-form .input-group input {
+  width: 100%;
+  margin-top: 5px;
+  padding: 10px;
+  border: 1px solid #b7b4bf;
+  border-radius: 8px;
+}
+
+.divider {
+  width: 100%;
+  border: 1px solid #d2d2d2;
+  margin-top: 24px;
+}
+
+.payment-variantes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.payment-system {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+}
+
+.stripe,
+.coinbase {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  border: 1px solid #b7b4bf;
+  border-radius: 12px;
+  background-color: #fff;
+  transition: 0.7s;
+}
+
+.stripe:hover,
+.coinbase:hover {
+  border-color: #775ce5;
+  transition: 0.7s;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+
+.stripe-container,
+.coinbase-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon {
+  padding: 10px;
+  background-color: rgb(220, 220, 220);
+  border-radius: 50%;
+}
+
+label,
+h4 {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.stripe.active,
+.coinbase.active {
+  border-color: #775ce5;
+  background-color: #e2ffe9;
+  box-shadow: 0 0 10px rgba(41, 0, 86, 0.3);
+}
+
+.stripe.active .stripe-container,
+.coinbase.active .coinbase-container {
+  color: #000;
+  font-weight: 500;
+}
+
+.sub-b {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.submit-btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  text-align: center;
+  color: #fff;
+  border-radius: 12px;
+  background-color: #775ce5;
+  transition: 0.5s;
+}
+
+.submit-btn:hover {
+  opacity: 0.7;
+  transition: 0.7s;
+}
+
+.frame-img {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .recive-page {
+    border: transparent;
+  }
+
+  .transaction-list {
+    padding: 10px;
+    margin-top: 60px;
+  }
+}
+
+@media (max-width: 376px) {
+  .recive-page {
+    width: 300px;
+  }
+  .stripe,
+  .coinbase {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}

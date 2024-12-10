@@ -1,0 +1,201 @@
+.well--page {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  justify-content: center;
+  align-items: center;
+
+  overflow: hidden;
+  position: relative; /* Щоб дочірні абсолютні елементи позиціонувалися відносно контейнера */
+}
+
+.well {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.well--upp {
+  width: 100%;
+  height: 400px;
+  background-image: url("../../../public/img/main-bg.svg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: local;
+  border: transparent;
+  border-bottom-left-radius: 40px;
+  border-bottom-right-radius: 40px;
+}
+
+.well--header {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1;
+
+  width: 220px;
+  height: 100px;
+}
+
+h1 {
+  font-size: 42px;
+  color: #fff;
+  font-weight: 700;
+}
+
+.header-title {
+  display: flex;
+}
+
+.header-subtitle {
+  display: flex;
+  font-size: 20px;
+  color: #fff;
+}
+
+.registartion-options {
+  width: 100%;
+  max-width: 370px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.sign--up {
+  width: 100%;
+  max-width: calc(320px / 2);
+  height: fit-content;
+  padding: 14px;
+
+  border: transparent;
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: #775ce5;
+  color: #fff;
+  z-index: 1;
+  transition: background-color 0.9s;
+}
+
+.sign--in {
+  width: 100%;
+  max-width: calc(320px / 2);
+  height: fit-content;
+  padding: 14px;
+
+  border: 1px solid #775ce5;
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: #fff;
+  color: #775ce5;
+
+  z-index: 1;
+  transition: background-color 0.9s;
+}
+
+.kernif {
+  background-image: url("../../../public/img/main-cash.png");
+  width: 100%;
+  background-size: cover;
+  position: absolute;
+  transition: all 0.3s ease;
+}
+
+.kerfin-right {
+  max-width: 256px;
+  height: 340px;
+  transform: rotate(-25deg);
+  margin: 58px 0px 0px 278px;
+}
+
+.kerfin-left {
+  max-width: 450px;
+  height: 400px;
+  margin: 0px 350px 0px 0px;
+  transform: scaleX(-1);
+}
+
+.sign--up:hover {
+  background-color: #4e2adc;
+  transition: 1s;
+}
+
+.sign--in:hover {
+  background-color: #d5cbff;
+  color: #fff;
+  transition: 1s;
+}
+
+@media (max-width: 1024px) {
+  .well--header {
+    margin-bottom: 180px;
+    transition: all 1s ease;
+  }
+
+  .kerfin-left {
+    display: none;
+  }
+
+  .kerfin-right {
+    max-width: 440px;
+    height: -webkit-fill-available;
+    margin: 120px 120px 0px 278px;
+    transition: all 1s ease;
+    transform: rotate(-35deg);
+  }
+
+  .registartion-options {
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 140px;
+    transition: all 1s ease;
+  }
+
+  .sign--up,
+  .sign--in {
+    width: 100%;
+    max-width: 370px;
+  }
+}
+
+@media (max-width: 768px) {
+  .registartion-options {
+    gap: 15px;
+    transition: all 1s ease;
+  }
+
+  .kerfin-right {
+    margin: 120px 120px 0px 278px;
+  }
+}
+
+@media (max-width: 440px) {
+  .sign--up,
+  .sign--in {
+    max-width: 320px;
+  }
+
+  .kerfin-right {
+    max-width: 440px;
+    height: 490px;
+    margin: 120px 250px 0px 278px;
+    transition: all 1s ease;
+    transform: rotate(-35deg);
+  }
+}
