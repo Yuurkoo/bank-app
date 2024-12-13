@@ -6,6 +6,7 @@
   width: 350px;
   margin: 50px auto;
   background-color: #fff;
+  border: 1px solid #939199;
   padding: 40px;
   border-radius: 10px;
   box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.065);
@@ -88,4 +89,10 @@ h3 {
   bottom: 10px;
   cursor: pointer;
   color: #888;
+}
+
+@media (max-width: 768px) {
+  .add-user {
+    border: transparent;
+  }
 }

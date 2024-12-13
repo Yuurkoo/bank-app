@@ -62,7 +62,7 @@ export default function Balance({ title }) {
         <div className="balance-transactions">
           <button className="btn-recive" onClick={() => navigate("/recive")}>
             <div className="balance-receive">
-              <img src="/img/recive.svg" alt="recive" />
+              <img src="/img/receive.svg" alt="recive" />
             </div>
             <p>Recieve</p>
           </button>
