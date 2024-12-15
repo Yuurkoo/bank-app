@@ -19,16 +19,11 @@
 
 const express = require('express')
 const mysql = require('mysql')
-const cors = require('cors')
-require('dotenv').config() // Завантаження змінних з .env
+require('dotenv').config()
 
-const router = express.Router() // Основний роутер
-const app = express() // Створення екземпляру Express
+const router = express.Router()
 
-app.use(express.json())
-app.use(cors())
-
-// Налаштування підключення до бази даних
+// Налаштування бази даних
 const db = mysql.createConnection({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
@@ -37,27 +32,25 @@ const db = mysql.createConnection({
   database: process.env.DB_NAME,
 })
 
-// Перевірка підключення до бази даних
 db.connect((err) => {
   if (err) {
     console.error(
       'Database connection error:',
       err.message || err,
     )
-    process.exit(1) // Завершити процес, якщо підключення не вдалося
+    process.exit(1)
   } else {
     console.log('Connected to the database')
   }
 })
 
-// Генерація коду для відновлення
+// Генерація коду відновлення
 let recoveryCodes = {}
 function generateCode() {
   const characters =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*'
   let result = ''
-  const length = 8
-  for (let i = 0; i < length; i++) {
+  for (let i = 0; i < 8; i++) {
     result += characters.charAt(
       Math.floor(Math.random() * characters.length),
     )
@@ -65,66 +58,48 @@ function generateCode() {
   return result
 }
 
-// Роут: Реєстрація користувача
+// Маршрут: Реєстрація користувача
 router.post('/signup', (req, res) => {
   const { email, password } = req.body
-
-  if (!email || !password) {
-    return res.status(400).send({
-      error: 'Invalid input',
-      details: 'Email or password is missing',
-    })
-  }
-
   const SQL =
     'INSERT INTO users (email, password) VALUES (?, ?)'
-  db.query(SQL, [email, password], (err, result) => {
-    if (err) {
-      console.error(
-        'Error inserting user:',
-        err.sqlMessage || err,
-      )
-      return res.status(500).send({
-        error: 'Database insertion error',
-        details: err.sqlMessage || err,
-      })
-    }
-    console.log('User added successfully:', email)
+  db.query(SQL, [email, password], (err) => {
+    if (err)
+      return res
+        .status(500)
+        .send({
+          error: 'Database error',
+          details: err.message,
+        })
     res
       .status(200)
-      .send({ message: 'User added successfully' })
+      .send({ message: 'User registered successfully' })
   })
 })
 
-// Роут: Логін користувача
+// Маршрут: Логін
 router.post('/signin', (req, res) => {
-  const { LoginEmail, LoginPassword } = req.body
-
+  const { email, password } = req.body
   const SQL =
     'SELECT * FROM users WHERE email = ? AND password = ?'
-  db.query(
-    SQL,
-    [LoginEmail, LoginPassword],
-    (err, result) => {
-      if (err) {
-        console.error('Error during login:', err)
-        return res
-          .status(500)
-          .send({ error: 'Database query error' })
-      } else if (result.length > 0) {
-        res
-          .status(200)
-          .send({
-            message: 'Login successful',
-            user: result[0],
-          })
-      } else {
-        res
-          .status(401)
-          .send({ error: 'Invalid credentials' })
-      }
-    },
-  )
+  db.query(SQL, [email, password], (err, result) => {
+    if (err)
+      return res
+        .status(500)
+        .send({
+          error: 'Database error',
+          details: err.message,
+        })
+    if (result.length > 0)
+      res
+        .status(200)
+        .send({
+          message: 'Login successful',
+          user: result[0],
+        })
+    else
+      res.status(401).send({ error: 'Invalid credentials' })
+  })
 })
 
 // Роут: Відновлення пароля - генерація коду
@@ -217,5 +192,4 @@ router.post('/settings', (req, res) => {
   })
 })
 
-// Експортуємо маршрути
 module.exports = router
