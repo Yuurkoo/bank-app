@@ -6,6 +6,8 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 
+require('dotenv').config()
+
 // Налаштування підключення до бази даних
 const db = mysql.createConnection({
   user: 'root',
@@ -13,6 +15,7 @@ const db = mysql.createConnection({
   password: '',
   database: 'bankapp',
   port: 3305,
+  url: 'mysql://root:pagBTyyPuJhYDarQlPLLazyAJpgBybdp@mysql.railway.internal:3306/railway',
 })
 
 // Перевірка підключення до бази даних
