@@ -1,11 +1,10 @@
 {
-  "name": "backend",
   "version": "1.0.0",
   "private": true,
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
-    "start": "node index.js"
+    "start": "node src/route/index.js",
+    "dev": "nodemon -e js,json ./src/route/index.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1", 
