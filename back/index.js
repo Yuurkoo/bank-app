@@ -15,7 +15,6 @@ const db = mysql.createConnection({
   password: '',
   database: 'bankapp',
   port: 3305,
-  url: 'mysql://root:pagBTyyPuJhYDarQlPLLazyAJpgBybdp@mysql.railway.internal:3306/railway',
 })
 
 // Перевірка підключення до бази даних
