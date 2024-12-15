@@ -1,20 +1,19 @@
 const express = require('express')
 const mysql = require('mysql')
 const cors = require('cors')
+require('dotenv').config() // Завантаження змінних з .env
 
 const app = express()
 app.use(express.json())
 app.use(cors())
 
-require('dotenv').config()
-
 // Налаштування підключення до бази даних
 const db = mysql.createConnection({
-  user: 'root',
-  host: '127.0.0.1',
-  password: '',
-  database: 'bankapp',
-  port: 3305,
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 })
 
 // Перевірка підключення до бази даних
@@ -24,6 +23,7 @@ db.connect((err) => {
       'Database connection error:',
       err.message || err,
     )
+    process.exit(1) // Завершити процес, якщо підключення не вдалося
   } else {
     console.log('Connected to the database')
   }
@@ -221,8 +221,9 @@ app.post('/settings', (req, res) => {
 
   res.status(200).send({ message: 'Route is working' })
 })
+
 // Запуск сервера
-const PORT = 3002
+const PORT = process.env.SERVER_PORT || 3002
 app.listen(PORT, () => {
   console.log(
     `Server is running on http://localhost:${PORT}`,
