@@ -3,13 +3,20 @@ const router = express.Router()
 const mysql = require('mysql')
 require('dotenv').config()
 
-// Підключення до бази даних
+// Перевірка значень для безпеки
+console.log(
+  'Connecting to DB at:',
+  process.env.DB_HOST,
+  process.env.DB_PORT,
+)
+
+// Створюємо підключення до MySQL
 const db = mysql.createConnection({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  host: process.env.DB_HOST || '127.0.0.1',
+  port: process.env.DB_PORT || 3306,
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_NAME || 'test',
 })
 
 db.connect((err) => {
@@ -20,7 +27,7 @@ db.connect((err) => {
     )
     process.exit(1)
   } else {
-    console.log('Connected to the database')
+    console.log('Successfully connected to the database')
   }
 })
 
