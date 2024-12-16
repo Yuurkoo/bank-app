@@ -13,10 +13,9 @@ console.log(
 // Створюємо підключення до MySQL
 const db = mysql.createConnection({
   host: process.env.DB_HOST || '127.0.0.1',
-  port: process.env.DB_PORT || 3306,
+  port: process.env.DB_PORT || 3305,
   user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'test',
+  database: process.env.DB_NAME || 'bankapp',
 })
 
 db.connect((err) => {
