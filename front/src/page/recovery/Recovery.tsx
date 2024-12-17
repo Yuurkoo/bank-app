@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./index.css";
+import { baseURL } from "../../Urls";
 
 type RecoveryPageProps = {
   description: string;
@@ -25,7 +26,7 @@ export default function Recovery({ description }: RecoveryPageProps) {
     }
 
     try {
-      const response = await fetch("http://localhost:3002/api/recovery", {
+      const response = await fetch(`${baseURL}/recovery`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

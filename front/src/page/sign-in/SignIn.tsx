@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FieldEmail } from "../../component/field-email/FieldEmail";
 import { FieldPassword } from "../../component/field-password/FieldPassword";
 import "./index.css";
+import { baseURL } from "../../Urls";
 
 type SignInPageProps = {
   description: string;
@@ -63,7 +64,7 @@ const SignInPage: React.FC<SignInPageProps> = ({ description, onLogin }) => {
     if (!emailValid || !passwordValid) return;
 
     try {
-      const response = await fetch("http://localhost:3002/api/signin", {
+      const response = await fetch(`${baseURL}/signin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

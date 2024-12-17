@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./index.css";
 import { FieldPassword } from "../../component/field-password/FieldPassword";
+import { baseURL } from "../../Urls";
 
 type RecoveryConfirmProps = {
   description: string;
@@ -30,16 +31,13 @@ export default function RecoveryConfirm({ description }: RecoveryConfirmProps) {
     }
 
     try {
-      const response = await fetch(
-        "http://localhost:3002/api/recovery-confirm",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, code, newPassword: password }),
-        }
-      );
+      const response = await fetch(`${baseURL}/recovery-confirm`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, code, newPassword: password }),
+      });
 
       if (!response.ok) {
         setError("Invalid code or failed to update password.");

@@ -5,6 +5,7 @@ import { FieldPassword } from "../../component/field-password/FieldPassword";
 import "./index.css";
 import Divider from "../../component/divider/Divider";
 import { useNavigate } from "react-router-dom";
+import { baseURL } from "../../Urls";
 
 const SettingsPage: React.FC = () => {
   const [email, setEmail] = useState<string>("");
@@ -39,7 +40,7 @@ const SettingsPage: React.FC = () => {
       return;
     }
     try {
-      await axios.post("http://localhost:3002/api/settings", {
+      await axios.post(`${baseURL}/settings`, {
         email,
         newEmail: email,
       });
@@ -56,7 +57,7 @@ const SettingsPage: React.FC = () => {
     }
 
     try {
-      await axios.post("http://localhost:3002/api/settings", {
+      await axios.post(`${baseURL}/settings`, {
         email,
         newPassword,
       });

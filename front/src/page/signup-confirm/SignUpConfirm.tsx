@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Axios from "axios";
 import "./index.css";
+import { baseURL } from "../../Urls";
 
 export default function SignupConfirm() {
   const location = useLocation();
@@ -38,7 +39,7 @@ export default function SignupConfirm() {
     console.log("Sending to /signup:", { email, password });
 
     try {
-      await Axios.post("http://localhost:3002/api/signup", { email, password });
+      await Axios.post(`${baseURL}/signup`, { email, password });
       alert("Account created successfully!");
 
       navigate("/balance");
