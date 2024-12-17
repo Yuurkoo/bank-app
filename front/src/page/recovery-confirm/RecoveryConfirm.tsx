@@ -1,19 +1,21 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./index.css";
 import { FieldPassword } from "../../component/field-password/FieldPassword";
 
-type RecoveryPageProps = {
+type RecoveryConfirmProps = {
   description: string;
 };
 
-export default function RecoveryConfirm({ description }: RecoveryPageProps) {
+export default function RecoveryConfirm({ description }: RecoveryConfirmProps) {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [email] = useState(location.state?.email || ""); // Email передається зі сторінки Recovery
   const [code, setCode] = useState("");
   const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
@@ -22,19 +24,22 @@ export default function RecoveryConfirm({ description }: RecoveryPageProps) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!code || !password || !email) {
+    if (!code || !password) {
       setError("Please fill in all fields.");
       return;
     }
 
     try {
-      const response = await fetch("http://localhost:3002/recovery-confirm", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, code, newPassword: password }),
-      });
+      const response = await fetch(
+        "http://localhost:3002/api/recovery-confirm",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, code, newPassword: password }),
+        }
+      );
 
       if (!response.ok) {
         setError("Invalid code or failed to update password.");
@@ -44,7 +49,7 @@ export default function RecoveryConfirm({ description }: RecoveryPageProps) {
       alert("Password updated successfully!");
       navigate("/signin");
     } catch (err) {
-      console.error("Error during recovery:", err);
+      console.error("Error during password recovery:", err);
       setError("An error occurred. Please try again.");
     }
   };
@@ -58,14 +63,6 @@ export default function RecoveryConfirm({ description }: RecoveryPageProps) {
 
       <form className="user-form" onSubmit={handleSubmit}>
         <div className="input-group">
-          <label>Email:</label>
-          <input
-            name="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-
           <label>Code:</label>
           <input
             name="code"
@@ -88,7 +85,7 @@ export default function RecoveryConfirm({ description }: RecoveryPageProps) {
           <button
             type="submit"
             className="sign-up-btn"
-            disabled={!email || !code || password.length < 8}
+            disabled={!code || password.length < 8}
           >
             Restore password
           </button>

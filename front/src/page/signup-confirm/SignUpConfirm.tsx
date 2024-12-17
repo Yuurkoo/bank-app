@@ -38,7 +38,7 @@ export default function SignupConfirm() {
     console.log("Sending to /signup:", { email, password });
 
     try {
-      await Axios.post("http://localhost:3002/signup", { email, password });
+      await Axios.post("http://localhost:3002/api/signup", { email, password });
       alert("Account created successfully!");
 
       navigate("/balance");

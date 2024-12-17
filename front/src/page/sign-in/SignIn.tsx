@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Axios from "axios";
 import { FieldEmail } from "../../component/field-email/FieldEmail";
 import { FieldPassword } from "../../component/field-password/FieldPassword";
 import "./index.css";
@@ -64,26 +63,28 @@ const SignInPage: React.FC<SignInPageProps> = ({ description, onLogin }) => {
     if (!emailValid || !passwordValid) return;
 
     try {
-      const response = await Axios.post("http://localhost:3002/signin", {
-        LoginEmail: form.email,
-        LoginPassword: form.password,
+      const response = await fetch("http://localhost:3002/api/signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          LoginEmail: form.email,
+          LoginPassword: form.password,
+        }),
       });
 
-      alert(response.data.message);
+      if (response.ok) {
+        const data = await response.json();
+        alert(data.message);
 
-      if (response.data.message) {
+        // Save login information
         const loginTime = new Date().toISOString();
-
-        // Зберігаємо дані користувача та час входу
         localStorage.setItem(
           "userData",
-          JSON.stringify({
-            email: form.email,
-            password: form.password,
-          })
+          JSON.stringify({ email: form.email, password: form.password })
         );
 
-        // Зберігаємо інформацію про входи
         const signInNotifications = JSON.parse(
           localStorage.getItem("signInNotifications") || "[]"
         );
@@ -99,9 +100,12 @@ const SignInPage: React.FC<SignInPageProps> = ({ description, onLogin }) => {
 
         onLogin();
         navigate("/balance");
+      } else {
+        const error = await response.json();
+        alert(`Login failed: ${error.error || "Server error"}`);
       }
     } catch (error: any) {
-      alert("Login failed: " + (error.response?.data?.error || "Server error"));
+      alert(`Login failed: ${error.message || "Network error"}`);
     }
   };
 

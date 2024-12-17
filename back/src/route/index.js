@@ -1,176 +1,204 @@
 const express = require('express')
 const router = express.Router()
-const mysql = require('mysql')
-require('dotenv').config()
-
-// Перевірка значень для безпеки
-console.log(
-  'Connecting to DB at:',
-  process.env.DB_HOST,
-  process.env.DB_PORT,
-)
-
-// Створюємо підключення до MySQL
-const db = mysql.createConnection({
-  host: process.env.DB_HOST || '127.0.0.1',
-  port: process.env.DB_PORT || 3305,
-  user: process.env.DB_USER || 'root',
-  database: process.env.DB_NAME || 'bankapp',
-})
-
-db.connect((err) => {
-  if (err) {
-    console.error(
-      'Database connection error:',
-      err.message || err,
-    )
-    process.exit(1)
-  } else {
-    console.log('Successfully connected to the database')
-  }
-})
+const User = require('../models/User') // Імпортуємо модель користувача
+const bcrypt = require('bcrypt')
+const crypto = require('crypto')
 
 // Головний маршрут
 router.get('/', (req, res) => {
-  res.status(200).json('Hello World')
+  res.status(200).json({ message: 'Server is running!' })
 })
 
 // Реєстрація нового користувача
-router.post('/signup', (req, res) => {
+router.post('/signup', async (req, res) => {
   const { email, password } = req.body
+
   if (!email || !password) {
-    return res.status(400).send({
-      error: 'Invalid input',
-      details: 'Email or password is missing',
-    })
+    return res
+      .status(400)
+      .json({ error: 'Email and password are required.' })
   }
-  const SQL =
-    'INSERT INTO users (email, password) VALUES (?, ?)'
-  db.query(SQL, [email, password], (err) => {
-    if (err) {
-      return res.status(500).send({
-        error: 'Database insertion error',
-        details: err.sqlMessage || err,
+
+  try {
+    const existingUser = await User.findOne({ email })
+    if (existingUser) {
+      return res.status(400).json({
+        error: 'User with this email already exists.',
       })
     }
+
+    // Хешування пароля
+    const hashedPassword = await bcrypt.hash(password, 10)
+
+    const newUser = new User({
+      email,
+      password: hashedPassword,
+    })
+    await newUser.save()
     res
-      .status(200)
-      .send({ message: 'User added successfully' })
-  })
+      .status(201)
+      .json({ message: 'User registered successfully' })
+  } catch (err) {
+    console.error('Error during signup:', err.message)
+    res.status(500).json({
+      error: 'Database error',
+      details: err.message,
+    })
+  }
 })
 
 // Логін користувача
-router.post('/signin', (req, res) => {
+router.post('/signin', async (req, res) => {
   const { LoginEmail, LoginPassword } = req.body
-  const SQL =
-    'SELECT * FROM users WHERE email = ? AND password = ?'
-  db.query(
-    SQL,
-    [LoginEmail, LoginPassword],
-    (err, result) => {
-      if (err)
-        return res
-          .status(500)
-          .send({ error: 'Database query error' })
-      if (result.length > 0) {
-        res.status(200).send({
-          message: 'Login successful',
-          user: result[0],
-        })
-      } else {
-        res
-          .status(401)
-          .send({ error: 'Invalid credentials' })
-      }
-    },
-  )
+
+  if (!LoginEmail || !LoginPassword) {
+    return res
+      .status(400)
+      .json({ error: 'Email and password are required.' })
+  }
+
+  try {
+    const user = await User.findOne({ email: LoginEmail })
+    if (!user) {
+      return res
+        .status(401)
+        .json({ error: 'Invalid email or password' })
+    }
+
+    // Порівняння хешованого пароля
+    const isPasswordValid = await bcrypt.compare(
+      LoginPassword,
+      user.password,
+    )
+    if (!isPasswordValid) {
+      return res
+        .status(401)
+        .json({ error: 'Invalid email or password' })
+    }
+
+    res.status(200).json({
+      message: 'Login successful',
+      user: { email: user.email, id: user._id },
+    })
+  } catch (err) {
+    console.error('Error during signin:', err.message)
+    res.status(500).json({
+      error: 'Database error',
+      details: err.message,
+    })
+  }
 })
 
-// Генерація коду для відновлення
+// Об'єкт для тимчасового зберігання кодів
 let recoveryCodes = {}
 
 // Генерація коду
 function generateCode() {
-  const characters =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*'
-  let result = ''
-  const length = 8
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(
-      Math.floor(Math.random() * characters.length),
-    )
-  }
-  return result
+  return crypto.randomBytes(4).toString('hex').toUpperCase() // Генерує 8-символьний код
 }
 
-router.post('/recovery', (req, res) => {
+// Генерація коду відновлення
+router.post('/recovery', async (req, res) => {
   const { email } = req.body
-  const SQL = 'SELECT * FROM users WHERE email = ?'
 
-  db.query(SQL, [email], (err, result) => {
-    if (err) {
-      console.error('Error checking email:', err)
+  if (!email) {
+    return res
+      .status(400)
+      .json({ error: 'Email is required' })
+  }
+
+  try {
+    const user = await User.findOne({ email })
+
+    if (!user) {
       return res
-        .status(500)
-        .json({ error: 'Database query error' })
+        .status(404)
+        .json({ error: 'Email not found' })
     }
 
-    if (result.length > 0) {
-      const recoveryCode = generateCode()
-      recoveryCodes[email] = recoveryCode
+    const recoveryCode = generateCode()
+    recoveryCodes[email] = recoveryCode
 
-      console.log('Generated recovery code:', recoveryCode)
-      return res
-        .status(200)
-        .json({ exists: true, code: recoveryCode })
-    }
+    console.log(
+      'Generated recovery code for',
+      email,
+      ':',
+      recoveryCode,
+    )
 
-    console.log('Email not found:', email)
-    return res.status(404).json({ exists: false })
-  })
+    // Імітація надсилання коду (реалізація надсилання залежить від вимог)
+    // TODO: Інтегрувати поштовий сервіс для відправки коду
+
+    res.status(200).json({
+      message: 'Recovery code sent to email',
+      code: recoveryCode,
+    })
+  } catch (err) {
+    console.error('Error during recovery:', err.message)
+    res.status(500).json({ error: 'Internal server error' })
+  }
 })
 
 // Перевірка коду та оновлення пароля
-router.post('/recovery-confirm', (req, res) => {
+router.post('/recovery-confirm', async (req, res) => {
   const { email, code, newPassword } = req.body
 
-  console.log('Received data:', {
+  if (!email || !code || !newPassword) {
+    return res
+      .status(400)
+      .json({ error: 'All fields are required' })
+  }
+
+  console.log('Received data for recovery:', {
     email,
     code,
     newPassword,
   })
-  console.log('Stored recovery codes:', recoveryCodes)
 
   if (
     !recoveryCodes[email] ||
     recoveryCodes[email] !== code
   ) {
-    console.error('Invalid recovery code for:', email)
     return res
       .status(400)
-      .send({ error: 'Invalid recovery code' })
+      .json({ error: 'Invalid recovery code' })
   }
 
-  const SQL =
-    'UPDATE users SET password = ? WHERE email = ?'
-  db.query(SQL, [newPassword, email], (err, result) => {
-    if (err) {
-      console.error('Error updating password:', err)
+  try {
+    const hashedPassword = await bcrypt.hash(
+      newPassword,
+      10,
+    )
+
+    const user = await User.findOneAndUpdate(
+      { email },
+      { password: hashedPassword },
+    )
+
+    if (!user) {
       return res
-        .status(500)
-        .send({ error: 'Database update error' })
+        .status(404)
+        .json({ error: 'User not found' })
     }
 
-    delete recoveryCodes[email] // Видалити код після успішного оновлення
-    console.log('Password updated for:', email)
-    return res
+    // Видаляємо код після успішного оновлення
+    delete recoveryCodes[email]
+
+    console.log('Password updated successfully for:', email)
+    res
       .status(200)
-      .send({ message: 'Password updated successfully' })
-  })
+      .json({ message: 'Password updated successfully' })
+  } catch (err) {
+    console.error(
+      'Error during password update:',
+      err.message,
+    )
+    res.status(500).json({ error: 'Internal server error' })
+  }
 })
 
 // Зміна email та password
-router.post('/settings', (req, res) => {
+router.post('/settings', async (req, res) => {
   const { email, password, newEmail, newPassword } =
     req.body
 
@@ -181,39 +209,59 @@ router.post('/settings', (req, res) => {
     })
   }
 
-  let sql = ''
-  let values = []
+  try {
+    const user = await User.findOne({ email })
+    if (!user) {
+      return res
+        .status(404)
+        .send({ error: 'User not found' })
+    }
 
-  if (newEmail) {
-    sql = 'UPDATE users SET email = ? WHERE email = ?'
-    values = [newEmail, email]
-  } else if (newPassword) {
-    sql = 'UPDATE users SET password = ? WHERE email = ?'
-    values = [newPassword, email]
-  }
-
-  db.query(sql, values, (err, result) => {
-    if (err) {
-      console.error(
-        'Error updating email:',
-        err.sqlMessage || err,
+    // Перевірка пароля, якщо оновлюється email або пароль
+    if (password) {
+      const isPasswordValid = await bcrypt.compare(
+        password,
+        user.password,
       )
-      return res.status(500).send({
-        error: 'Database update error',
-        details: err.sqlMessage || err,
+      if (!isPasswordValid) {
+        return res
+          .status(401)
+          .send({ error: 'Invalid current password' })
+      }
+    }
+
+    // Оновлення email
+    if (newEmail) {
+      user.email = newEmail
+    }
+
+    // Оновлення пароля
+    if (newPassword) {
+      const hashedPassword = await bcrypt.hash(
+        newPassword,
+        10,
+      )
+      user.password = hashedPassword
+    }
+
+    await user.save()
+    res
+      .status(200)
+      .send({
+        message: 'User settings updated successfully',
       })
-    }
-
-    if (result.affectedRows > 0) {
-      res
-        .status(200)
-        .send({ message: 'Email updated successfully' })
-    } else {
-      res.status(404).send({ error: 'User not found' })
-    }
-  })
-
-  res.status(200).send({ message: 'Route is working' })
+  } catch (err) {
+    console.error(
+      'Error updating user settings:',
+      err.message,
+    )
+    res
+      .status(500)
+      .send({
+        error: 'Database update error',
+        details: err.message,
+      })
+  }
 })
 
 module.exports = router

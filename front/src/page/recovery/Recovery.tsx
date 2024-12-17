@@ -13,7 +13,7 @@ export default function Recovery({ description }: RecoveryPageProps) {
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
-    setError(""); // Очистити помилку, якщо користувач ввів новий email
+    setError("");
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -25,7 +25,7 @@ export default function Recovery({ description }: RecoveryPageProps) {
     }
 
     try {
-      const response = await fetch("http://localhost:3002/recovery", {
+      const response = await fetch("http://localhost:3002/api/recovery", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -43,13 +43,10 @@ export default function Recovery({ description }: RecoveryPageProps) {
       }
 
       const data = await response.json();
-
-      if (data.exists) {
-        alert(`Your recovery code: ${data.code}`); // Використовуємо код із бекенду
-        navigate("/recovery-confirm");
-      }
-    } catch (error) {
-      console.error("Error verifying email:", error);
+      alert(`Recovery code sent to your email: ${data.code}`); // Тимчасово
+      navigate("/recovery-confirm", { state: { email } });
+    } catch (err) {
+      console.error("Error during recovery:", err);
       setError("An error occurred. Please try again later.");
     }
   };

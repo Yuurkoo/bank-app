@@ -1,24 +1,21 @@
-const { Pool } = require('pg')
+const mongoose = require('mongoose')
 require('dotenv').config()
 
-const pool = new Pool({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  ssl: { rejectUnauthorized: false }, // Для підключення до Render
-})
-
-pool.connect((err) => {
-  if (err) {
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(
+      process.env.MONGO_URI,
+    )
+    console.log(
+      `Connected to MongoDB database: ${conn.connection.name}`,
+    )
+  } catch (err) {
     console.error(
-      'Error connecting to PostgreSQL:',
+      'Error connecting to MongoDB:',
       err.message,
     )
-  } else {
-    console.log('Connected to PostgreSQL database')
+    process.exit(1)
   }
-})
+}
 
-module.exports = pool
+module.exports = connectDB

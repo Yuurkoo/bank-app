@@ -16,25 +16,6 @@ type Notification = {
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  const parseDate = (date: string): number => {
-    const parsedDate = new Date(date);
-
-    if (!isNaN(parsedDate.getTime())) {
-      return parsedDate.getTime();
-    }
-
-    const parts = date.match(
-      /(\d{2})\.(\d{2})\.(\d{4}) (\d{2}):(\d{2}):(\d{2})/
-    );
-
-    if (parts) {
-      const [, day, month, year, hour, minute, second] = parts.map(Number);
-      return new Date(year, month - 1, day, hour, minute, second).getTime();
-    }
-
-    return 0;
-  };
-
   useEffect(() => {
     const storedWarnings: Notification[] = JSON.parse(
       localStorage.getItem("signInNotifications") || "[]"
@@ -45,106 +26,99 @@ export default function NotificationsPage() {
     );
 
     const transactionNotifications: Notification[] = storedTransactions.map(
-      (transaction) => ({
+      ({ email, method, date }) => ({
         type: "info",
-        title: transaction.email
-          ? `Sent to ${transaction.email}`
-          : `Received via ${transaction.method}`,
-        time: transaction.date,
+        title: email ? `Sent to ${email}` : `Received via ${method}`,
+        time: date,
       })
     );
 
-    // Об'єднуємо всі повідомлення
     const allNotifications = [...storedWarnings, ...transactionNotifications];
 
-    // Змінна для контролю чергування типів
-    let lastType: "info" | "warning" | null = null;
-
-    // Чергування повідомлень
-    const orderedNotifications = allNotifications.reduce<Notification[]>(
-      (acc, curr) => {
-        // Якщо це перше повідомлення, просто додаємо
-        if (lastType === null) {
-          acc.push(curr);
-          lastType = curr.type;
-        } else {
-          // Якщо тип повідомлення відрізняється від попереднього, додаємо його
-          if (curr.type !== lastType) {
-            acc.push(curr);
-            lastType = curr.type;
-          } else {
-            // Якщо тип однаковий, додаємо після іншого типу
-            const oppositeType = lastType === "info" ? "warning" : "info";
-            const oppositeIndex = acc.findIndex(
-              (notif) => notif.type === oppositeType
-            );
-            if (oppositeIndex !== -1) {
-              acc.splice(oppositeIndex + 1, 0, curr);
-            } else {
-              acc.push(curr);
-            }
-          }
-        }
-        return acc;
-      },
-      []
+    // Сортуємо повідомлення за часом
+    const sortedNotifications = allNotifications.sort(
+      (a, b) =>
+        new Date(parseDate(b.time)).getTime() -
+        new Date(parseDate(a.time)).getTime()
     );
 
-    setNotifications(orderedNotifications);
+    setNotifications(sortedNotifications);
   }, []);
 
-  const formatDate = (time: string): string => {
-    const date = new Date(parseDate(time));
+  // Функція для парсингу дати з різних форматів
+  const parseDate = (date: string): string => {
+    const isoDate = new Date(date);
+    if (!isNaN(isoDate.getTime())) return isoDate.toISOString(); // ISO формат коректний
 
-    // Формат дати: dd.MM.yyyy
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Місяць від 0 до 11, тому додаємо 1
-    const year = date.getFullYear();
+    // Якщо дата у форматі dd.MM.yyyy HH:mm:ss
+    const parts = date.match(
+      /(\d{2})\.(\d{2})\.(\d{4}),? (\d{2}):(\d{2}):(\d{2})/
+    );
+    if (parts) {
+      const [, day, month, year, hour, minute, second] = parts.map(Number);
+      return new Date(year, month - 1, day, hour, minute, second).toISOString();
+    }
 
-    // Форматуємо дату як день.місяць.рік
-    const formattedDate = `${day}.${month}.${year}`;
+    return new Date().toISOString(); // Значення за замовчуванням
+  };
 
-    // Форматуємо час
-    const formattedTime = date.toLocaleTimeString();
+  // Функція для форматування дати у єдиний вигляд
+  const formatDate = (date: string): string => {
+    const parsedDate = new Date(parseDate(date));
 
-    return `${formattedDate} ${formattedTime}`;
+    const day = String(parsedDate.getDate()).padStart(2, "0");
+    const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
+    const year = parsedDate.getFullYear();
+
+    const hours = String(parsedDate.getHours()).padStart(2, "0");
+    const minutes = String(parsedDate.getMinutes()).padStart(2, "0");
+    const seconds = String(parsedDate.getSeconds()).padStart(2, "0");
+
+    return `${day}.${month}.${year}, ${hours}:${minutes}:${seconds}`;
   };
 
   return (
     <div className="notif-head">
       <div className="notifications-page">
-        <div className="notifications-title">
-          <h2>Notifications</h2>
-        </div>
+        <h2 className="notifications-title">Notifications</h2>
         <div className="notifications-container">
           {notifications.map((notification, index) => (
-            <div
+            <NotificationItem
               key={index}
-              className={`notification-item ${
-                notification.type === "info"
-                  ? "notifications-info"
-                  : "notifications-warning"
-              }`}
-            >
-              <img
-                src={
-                  notification.type === "info"
-                    ? "/img/notification.svg"
-                    : "/img/warning.svg"
-                }
-                alt={notification.type}
-                className="notification-icon"
-              />
-              <div className="notifications-info-value">
-                <p className="notifications-info-title">{notification.title}</p>
-                <p className="notifications-info-time">
-                  {formatDate(notification.time)}
-                </p>
-              </div>
-            </div>
+              notification={{
+                ...notification,
+                time: formatDate(notification.time),
+              }}
+            />
           ))}
         </div>
       </div>
     </div>
   );
 }
+
+// Окремий компонент для відображення повідомлення
+const NotificationItem = ({ notification }: { notification: Notification }) => {
+  const iconSrc =
+    notification.type === "info" ? "/img/notification.svg" : "/img/warning.svg";
+
+  return (
+    <div
+      className={`notification-item ${
+        notification.type === "info"
+          ? "notifications-info"
+          : "notifications-warning"
+      }`}
+    >
+      <img
+        src={iconSrc}
+        alt={notification.type}
+        className="notification-icon"
+      />
+      <div className="notifications-info-value">
+        <p className="notifications-info-title">{notification.title}</p>
+        <p className="notifications-info-time">{notification.time}</p>
+      </div>
+    </div>
+  );
+};

@@ -39,7 +39,7 @@ const SettingsPage: React.FC = () => {
       return;
     }
     try {
-      await axios.post("http://localhost:3002/settings", {
+      await axios.post("http://localhost:3002/api/settings", {
         email,
         newEmail: email,
       });
@@ -56,7 +56,7 @@ const SettingsPage: React.FC = () => {
     }
 
     try {
-      await axios.post("http://localhost:3002/settings", {
+      await axios.post("http://localhost:3002/api/settings", {
         email,
         newPassword,
       });
