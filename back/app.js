@@ -15,6 +15,6 @@ app.use(
 app.use(express.json()) // Дозволяє обробляти JSON запити
 
 // Використовуємо маршрути
-app.use('/api', routes)
+app.use('/', routes)
 
 module.exports = app

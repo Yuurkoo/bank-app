@@ -245,22 +245,18 @@ router.post('/settings', async (req, res) => {
     }
 
     await user.save()
-    res
-      .status(200)
-      .send({
-        message: 'User settings updated successfully',
-      })
+    res.status(200).send({
+      message: 'User settings updated successfully',
+    })
   } catch (err) {
     console.error(
       'Error updating user settings:',
       err.message,
     )
-    res
-      .status(500)
-      .send({
-        error: 'Database update error',
-        details: err.message,
-      })
+    res.status(500).send({
+      error: 'Database update error',
+      details: err.message,
+    })
   }
 })
 
